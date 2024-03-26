@@ -29,15 +29,22 @@ done
 if [ "$FILES" != "" ]
 then
     echo "Running Code Sniffer. Code standard PSR2."
-    ./vendor/bin/phpcs --standard=PSR12 --colors --encoding=utf-8 -n -p $FILES
-    if [ $? != 0 ]
-    then
-        echo "Fix the error before commit!"
-        echo "Run"
-        echo "  ./vendor/bin/phpcs --standard=PSR2 $FILES"
-        echo "for automatic fix or fix it manually."
-        exit 1
-    fi
+    for FILE in $FILES
+    do
+        # 排除vendor文件夹下的文件
+        if [[ ! $FILE == *"vendor/"* ]]; then
+            ./vendor/bin/phpcs --standard=PSR12 --colors --encoding=utf-8 -n -p $FILE
+            if [ $? != 0 ]
+            then
+                echo "Fix the error before commit!"
+                echo "Run"
+                echo "  ./vendor/bin/phpcs --standard=PSR2 $FILE"
+                echo "for automatic fix or fix it manually."
+                exit 1
+            fi
+        fi
+    done
 fi
+
 
 exit $?
